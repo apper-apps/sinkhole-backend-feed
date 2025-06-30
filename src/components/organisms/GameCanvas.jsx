@@ -81,9 +81,9 @@ const interval = setInterval(updatePlayer, 16); // ~60fps
   }, [mousePos]);
 
   // Check district changes
+// Check district changes
   useEffect(() => {
     const district = getDistrictFromPosition(player.x, player.y);
-    if (district && (!currentDistrict || currentDistrict.name !== district.name)) {
     if (district && (!currentDistrict || currentDistrict.name !== district.name)) {
       setCurrentDistrict(district);
       onDistrictChange?.(district);
@@ -95,8 +95,9 @@ const interval = setInterval(updatePlayer, 16); // ~60fps
           position: 'top-center'
         });
       }
-    }
+}
   }, [player, currentDistrict, onDistrictChange]);
+
   // Create particle effect
   const createParticles = useCallback((x, y, color, count = 8) => {
     const newParticles = [];
