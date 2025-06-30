@@ -1,0 +1,64 @@
+{
+  "gameObjectData": [
+    {
+      "Id": 1,
+      "type": "trash",
+      "position": { "x": 100, "y": 150 },
+      "size": 5,
+      "points": 10,
+      "color": "#666666",
+      "shape": "circle",
+      "isConsumable": true
+    },
+    {
+      "Id": 2,
+      "type": "sign",
+      "position": { "x": 250, "y": 200 },
+      "size": 12,
+      "points": 25,
+      "color": "#ffff00",
+      "shape": "square",
+      "isConsumable": true
+    },
+    {
+      "Id": 3,
+      "type": "drone",
+      "position": { "x": 400, "y": 180 },
+      "size": 16,
+      "points": 50,
+      "color": "#ff00ff",
+      "shape": "triangle",
+      "isConsumable": true
+    },
+    {
+      "Id": 4,
+      "type": "hovercar",
+      "position": { "x": 350, "y": 350 },
+      "size": 25,
+      "points": 100,
+      "color": "#00ffff",
+      "shape": "square",
+      "isConsumable": true
+    },
+    {
+      "Id": 5,
+      "type": "billboard",
+      "position": { "x": 500, "y": 300 },
+      "size": 35,
+      "points": 200,
+      "color": "#ff6600",
+      "shape": "square",
+      "isConsumable": true
+    },
+    {
+      "Id": 6,
+      "type": "building",
+      "position": { "x": 600, "y": 400 },
+      "size": 50,
+      "points": 500,
+      "color": "#9900ff",
+      "shape": "square",
+      "isConsumable": true
+    }
+  ]
+}
