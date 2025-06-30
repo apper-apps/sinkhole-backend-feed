@@ -4,20 +4,26 @@ import { useMediaQuery } from 'react-responsive';
 const Minimap = ({ player, districts, currentDistrict, canvasWidth, canvasHeight }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
   
-  // Scale factor for minimap
-  const scale = isMobile ? 0.15 : 0.2;
-  const mapWidth = canvasWidth * scale;
-  const mapHeight = canvasHeight * scale;
-  
+// Scale factor for minimap - more aggressive mobile scaling
+  const scale = isMobile ? 0.12 : 0.2;
+  const mapWidth = Math.min(canvasWidth * scale, isMobile ? 120 : 200);
+  const mapHeight = Math.min(canvasHeight * scale, isMobile ? 80 : 150);
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
-      className="absolute top-4 left-4 bg-surface/80 backdrop-blur-sm border border-primary/30 rounded-lg p-3 shadow-neon"
-      style={{ width: mapWidth + 20, height: mapHeight + 40 }}
-    >
-      <div className="text-xs text-primary font-bold mb-2 text-center">
+className={`absolute bg-surface/80 backdrop-blur-sm border border-primary/30 rounded-lg shadow-neon ${
+        isMobile ? 'top-2 left-2 p-2' : 'top-4 left-4 p-3'
+      }`}
+      style={{ 
+        width: mapWidth + (isMobile ? 16 : 20), 
+        height: mapHeight + (isMobile ? 24 : 40) 
+      }}
+>
+      <div className={`text-primary font-bold text-center ${
+        isMobile ? 'text-xs mb-1' : 'text-xs mb-2'
+      }`}>
         {currentDistrict?.name || 'Unknown District'}
       </div>
       
@@ -41,18 +47,22 @@ const Minimap = ({ player, districts, currentDistrict, canvasWidth, canvasHeight
               height: district.bounds.height * scale
             }}
           >
-            <div className="text-xs text-white/70 p-1 font-medium">
+<div className={`text-white/70 font-medium ${
+              isMobile ? 'text-xs p-0.5' : 'text-xs p-1'
+            }`}>
               {district.name.split(' ')[0]}
             </div>
           </div>
         ))}
         
         {/* Player position */}
-        <motion.div
-          className="absolute w-2 h-2 bg-primary rounded-full shadow-lg"
+<motion.div
+          className={`absolute bg-primary rounded-full shadow-lg ${
+            isMobile ? 'w-1.5 h-1.5' : 'w-2 h-2'
+          }`}
           style={{
-            left: (player.x * scale) - 4,
-            top: (player.y * scale) - 4
+            left: (player.x * scale) - (isMobile ? 3 : 4),
+            top: (player.y * scale) - (isMobile ? 3 : 4)
           }}
           animate={{
             scale: [1, 1.3, 1],
@@ -66,7 +76,9 @@ const Minimap = ({ player, districts, currentDistrict, canvasWidth, canvasHeight
         />
       </div>
       
-      <div className="text-xs text-secondary mt-1 text-center">
+<div className={`text-secondary text-center ${
+        isMobile ? 'text-xs mt-0.5' : 'text-xs mt-1'
+      }`}>
         {currentDistrict?.description || 'Exploring...'}
       </div>
     </motion.div>

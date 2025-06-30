@@ -1,22 +1,25 @@
 import { motion } from 'framer-motion';
+import { useMediaQuery } from 'react-responsive';
 import Button from '@/components/atoms/Button';
 import Text from '@/components/atoms/Text';
 import ApperIcon from '@/components/ApperIcon';
 
-const Empty = ({ 
+const Empty = ({
   title = "Nothing Here",
   message = "The void is empty",
   actionText = "Start Game",
   onAction,
   icon = "Circle"
 }) => {
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+  
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
       <motion.div
         initial={{ opacity: 0, y: 20, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6 }}
-        className="text-center space-y-6 max-w-md"
+        className={`text-center max-w-md ${isMobile ? 'space-y-4' : 'space-y-6'}`}
       >
         {/* Empty State Icon */}
         <motion.div
@@ -25,12 +28,14 @@ const Empty = ({
           transition={{ duration: 0.8, delay: 0.2, type: "spring" }}
           className="mx-auto"
         >
-          <motion.div
+<motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="w-24 h-24 border-4 border-primary rounded-full bg-background shadow-neon-strong flex items-center justify-center"
+            className={`border-4 border-primary rounded-full bg-background shadow-neon-strong flex items-center justify-center ${
+              isMobile ? 'w-20 h-20' : 'w-24 h-24'
+            }`}
           >
-            <ApperIcon name={icon} size={40} className="text-primary opacity-60" />
+            <ApperIcon name={icon} size={isMobile ? 32 : 40} className="text-primary opacity-60" />
           </motion.div>
         </motion.div>
 
@@ -40,7 +45,13 @@ const Empty = ({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <Text variant="display" size="3xl" color="primary" neon className="font-bold">
+<Text 
+            variant="display" 
+            size={isMobile ? "2xl" : "3xl"} 
+            color="primary" 
+            neon 
+            className="font-bold"
+          >
             {title}
           </Text>
         </motion.div>
@@ -49,15 +60,22 @@ const Empty = ({
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="space-y-4"
+transition={{ duration: 0.6, delay: 0.6 }}
+          className={isMobile ? 'space-y-3' : 'space-y-4'}
         >
-          <Text variant="body" size="lg" color="white" className="leading-relaxed">
+          <Text 
+            variant="body" 
+            size={isMobile ? "base" : "lg"} 
+            color="white" 
+            className="leading-relaxed"
+          >
             {message}
           </Text>
           
-          <div className="bg-surface/40 backdrop-blur-sm border border-secondary/30 rounded-lg p-4">
-            <Text variant="body" size="sm" color="gray">
+<div className={`bg-surface/40 backdrop-blur-sm border border-secondary/30 rounded-lg ${
+            isMobile ? 'p-3' : 'p-4'
+          }`}>
+            <Text variant="body" size={isMobile ? "xs" : "sm"} color="gray">
               The cyberpunk city awaits your consumption. Start the game to begin devouring the neon landscape.
             </Text>
           </div>
@@ -70,14 +88,14 @@ const Empty = ({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.8 }}
           >
-            <Button 
+<Button 
               onClick={onAction} 
               variant="primary" 
-              size="lg"
-              className="shadow-neon-strong animate-pulse-neon"
+              size={isMobile ? "base" : "lg"}
+              className={`shadow-neon-strong animate-pulse-neon ${isMobile ? 'min-h-[48px]' : ''}`}
             >
-              <span className="flex items-center space-x-2">
-                <ApperIcon name="Play" size={20} />
+<span className="flex items-center space-x-2">
+                <ApperIcon name="Play" size={isMobile ? 18 : 20} />
                 <span>{actionText}</span>
               </span>
             </Button>

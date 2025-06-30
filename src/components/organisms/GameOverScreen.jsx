@@ -1,23 +1,25 @@
 import { motion } from 'framer-motion';
+import { useMediaQuery } from 'react-responsive';
 import Button from '@/components/atoms/Button';
 import Text from '@/components/atoms/Text';
 import ScoreDisplay from '@/components/molecules/ScoreDisplay';
 import ApperIcon from '@/components/ApperIcon';
-
 const GameOverScreen = ({ score, highScore, onRestart, onMainMenu }) => {
   const isNewHighScore = score === highScore && score > 0;
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+  const particleCount = isMobile ? 15 : 30;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background/90 backdrop-blur-sm relative overflow-hidden">
-      {/* Animated background particles */}
+{/* Animated background particles - optimized for mobile */}
       <div className="absolute inset-0 overflow-hidden">
-        {[...Array(30)].map((_, i) => (
+        {[...Array(particleCount)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-primary rounded-full opacity-30"
             animate={{
-              x: [0, Math.random() * window.innerWidth],
-              y: [window.innerHeight, -100],
+              x: [0, Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 800)],
+              y: [typeof window !== 'undefined' ? window.innerHeight : 600, -100],
               opacity: [0, 1, 0],
             }}
             transition={{
@@ -26,17 +28,19 @@ const GameOverScreen = ({ score, highScore, onRestart, onMainMenu }) => {
               delay: Math.random() * 2,
             }}
             style={{
-              left: Math.random() * window.innerWidth,
+              left: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 800),
             }}
           />
         ))}
       </div>
 
-      <motion.div
+<motion.div
         initial={{ opacity: 0, scale: 0.8, y: 50 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="text-center space-y-8 z-10 px-4 max-w-lg mx-auto"
+        className={`text-center z-10 px-4 mx-auto ${
+          isMobile ? 'space-y-4 max-w-sm' : 'space-y-8 max-w-lg'
+        }`}
       >
         {/* Game Over Title */}
         <motion.div
@@ -45,24 +49,32 @@ const GameOverScreen = ({ score, highScore, onRestart, onMainMenu }) => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="space-y-4"
         >
-          {isNewHighScore && (
+{isNewHighScore && (
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.5, delay: 0.3, type: "spring" }}
-              className="flex items-center justify-center space-x-2 text-accent"
+              className={`flex items-center justify-center text-accent ${
+                isMobile ? 'space-x-1 flex-col' : 'space-x-2'
+              }`}
             >
-              <ApperIcon name="Crown" size={32} className="text-accent animate-glow" />
-              <Text variant="display" size="xl" color="accent" neon className="font-bold">
+              <ApperIcon name="Crown" size={isMobile ? 24 : 32} className="text-accent animate-glow" />
+              <Text 
+                variant="display" 
+                size={isMobile ? "lg" : "xl"} 
+                color="accent" 
+                neon 
+                className="font-bold"
+              >
                 NEW HIGH SCORE!
               </Text>
-              <ApperIcon name="Crown" size={32} className="text-accent animate-glow" />
+              {!isMobile && <ApperIcon name="Crown" size={32} className="text-accent animate-glow" />}
             </motion.div>
           )}
           
-          <Text 
+<Text 
             variant="display" 
-            size="4xl" 
+            size={isMobile ? "2xl" : "4xl"} 
             color="error" 
             neon 
             className="font-black"
@@ -78,12 +90,15 @@ const GameOverScreen = ({ score, highScore, onRestart, onMainMenu }) => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="space-y-6"
         >
-          <div className="bg-surface/60 backdrop-blur-sm border border-primary/40 rounded-lg p-6 shadow-neon-strong">
+<div className={`bg-surface/60 backdrop-blur-sm border border-primary/40 rounded-lg shadow-neon-strong ${
+            isMobile ? 'p-4' : 'p-6'
+          }`}>
             <ScoreDisplay score={score} label="Final Score" animate={false} />
           </div>
-          
-          {highScore > 0 && !isNewHighScore && (
-            <div className="bg-surface/40 backdrop-blur-sm border border-secondary/30 rounded-lg p-4 shadow-neon">
+{highScore > 0 && !isNewHighScore && (
+            <div className={`bg-surface/40 backdrop-blur-sm border border-secondary/30 rounded-lg shadow-neon ${
+              isMobile ? 'p-3' : 'p-4'
+            }`}>
               <ScoreDisplay score={highScore} label="High Score" animate={false} />
             </div>
           )}
@@ -96,7 +111,12 @@ const GameOverScreen = ({ score, highScore, onRestart, onMainMenu }) => {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="space-y-2"
         >
-          <Text variant="body" size="lg" color="white" className="font-medium">
+<Text 
+            variant="body" 
+            size={isMobile ? "base" : "lg"} 
+            color="white" 
+            className="font-medium"
+          >
             {isNewHighScore ? "Incredible performance!" : 
              score > 5000 ? "Excellent work!" : 
              score > 2500 ? "Great job!" : 
@@ -117,13 +137,15 @@ const GameOverScreen = ({ score, highScore, onRestart, onMainMenu }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center"
+className={`flex gap-4 justify-center ${
+            isMobile ? 'flex-col' : 'flex-col sm:flex-row'
+          }`}
         >
-          <Button 
+<Button 
             onClick={onRestart} 
             variant="primary" 
-            size="lg"
-            className="shadow-neon-strong"
+            size={isMobile ? "base" : "lg"}
+            className={`shadow-neon-strong ${isMobile ? 'min-h-[48px]' : ''}`}
           >
             <span className="flex items-center space-x-2">
               <ApperIcon name="RotateCcw" size={20} />
@@ -131,10 +153,11 @@ const GameOverScreen = ({ score, highScore, onRestart, onMainMenu }) => {
             </span>
           </Button>
           
-          <Button 
+<Button 
             onClick={onMainMenu} 
             variant="ghost" 
-            size="lg"
+            size={isMobile ? "base" : "lg"}
+            className={isMobile ? 'min-h-[48px]' : ''}
           >
             <span className="flex items-center space-x-2">
               <ApperIcon name="Home" size={20} />

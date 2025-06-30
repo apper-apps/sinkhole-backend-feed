@@ -13,13 +13,25 @@ body {
   font-family: 'Space Grotesk', sans-serif;
   background-color: #0a0a0f;
   color: #ffffff;
-  overflow: hidden;
+overflow: hidden;
+  /* Mobile optimizations */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
 }
 
 canvas {
   display: block;
   background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a0f 100%);
   cursor: none;
+  /* Mobile touch optimizations */
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
 }
 
 .game-grid {
@@ -37,6 +49,16 @@ canvas {
   top: 1rem;
   right: 1rem;
   width: 320px;
+}
+
+/* Mobile-specific toast positioning */
+@media (max-width: 768px) {
+  .Toastify__toast-container {
+    top: 0.5rem;
+    right: 0.5rem;
+    left: 0.5rem;
+    width: auto;
+  }
 }
 
 .Toastify__toast {
@@ -62,4 +84,17 @@ canvas {
 
 .Toastify__progress-bar {
   background: linear-gradient(90deg, #00ffff 0%, #ff00ff 100%);
+}
+
+/* Mobile touch interaction improvements */
+@media (max-width: 768px) {
+  .Toastify__toast {
+    min-height: 60px;
+    padding: 16px 20px;
+  }
+  
+  button, .btn, [role="button"] {
+    min-height: 48px;
+    min-width: 48px;
+  }
 }

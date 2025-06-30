@@ -55,9 +55,21 @@ export default {
           '100%': { opacity: '0', transform: 'scale(0.5)' },
         }
       },
-      boxShadow: {
+boxShadow: {
         'neon': '0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor',
         'neon-strong': '0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor',
+      },
+      screens: {
+        'xs': '475px',
+        'touch': { 'raw': '(hover: none)' },
+        'no-touch': { 'raw': '(hover: hover)' },
+      },
+      spacing: {
+        'touch': '48px', // Minimum touch target size
+        'safe-top': 'env(safe-area-inset-top)',
+        'safe-bottom': 'env(safe-area-inset-bottom)',
+        'safe-left': 'env(safe-area-inset-left)',
+        'safe-right': 'env(safe-area-inset-right)',
       }
     },
   },
