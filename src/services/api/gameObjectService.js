@@ -5,51 +5,92 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 class GameObjectService {
   constructor() {
-    this.objectTypes = [
-      { type: 'trash', minSize: 3, maxSize: 8, points: 10, color: '#666666', shape: 'circle' },
-      { type: 'sign', minSize: 8, maxSize: 15, points: 25, color: '#ffff00', shape: 'square' },
-      { type: 'drone', minSize: 12, maxSize: 20, points: 50, color: '#ff00ff', shape: 'triangle' },
-      { type: 'hovercar', minSize: 18, maxSize: 30, points: 100, color: '#00ffff', shape: 'square' },
-      { type: 'billboard', minSize: 25, maxSize: 40, points: 200, color: '#ff6600', shape: 'square' },
-      { type: 'building', minSize: 35, maxSize: 60, points: 500, color: '#9900ff', shape: 'square' },
+    this.districts = [
+      {
+        name: 'Downtown',
+        bounds: { x: 0, y: 0, widthRatio: 0.4, heightRatio: 0.4 },
+        objectTypes: [
+          { type: 'trash', weight: 20, minSize: 3, maxSize: 8, points: 10, color: '#666666', shape: 'circle' },
+          { type: 'sign', weight: 25, minSize: 8, maxSize: 15, points: 25, color: '#ffff00', shape: 'square' },
+          { type: 'drone', weight: 15, minSize: 12, maxSize: 20, points: 50, color: '#ff00ff', shape: 'triangle' },
+          { type: 'hovercar', weight: 10, minSize: 18, maxSize: 30, points: 100, color: '#00ffff', shape: 'square' },
+          { type: 'billboard', weight: 20, minSize: 25, maxSize: 40, points: 200, color: '#ff6600', shape: 'square' },
+          { type: 'building', weight: 30, minSize: 35, maxSize: 60, points: 500, color: '#9900ff', shape: 'square' }
+        ]
+      },
+      {
+        name: 'Residential',
+        bounds: { x: 0.4, y: 0, widthRatio: 0.6, heightRatio: 0.5 },
+        objectTypes: [
+          { type: 'trash', weight: 40, minSize: 3, maxSize: 8, points: 10, color: '#666666', shape: 'circle' },
+          { type: 'sign', weight: 30, minSize: 8, maxSize: 15, points: 25, color: '#ffff00', shape: 'square' },
+          { type: 'drone', weight: 5, minSize: 12, maxSize: 20, points: 50, color: '#ff00ff', shape: 'triangle' },
+          { type: 'hovercar', weight: 15, minSize: 18, maxSize: 30, points: 100, color: '#00ffff', shape: 'square' },
+          { type: 'billboard', weight: 5, minSize: 25, maxSize: 40, points: 200, color: '#ff6600', shape: 'square' },
+          { type: 'building', weight: 10, minSize: 35, maxSize: 60, points: 500, color: '#9900ff', shape: 'square' }
+        ]
+      },
+      {
+        name: 'Industrial',
+        bounds: { x: 0, y: 0.4, widthRatio: 0.3, heightRatio: 0.6 },
+        objectTypes: [
+          { type: 'trash', weight: 15, minSize: 3, maxSize: 8, points: 10, color: '#666666', shape: 'circle' },
+          { type: 'sign', weight: 10, minSize: 8, maxSize: 15, points: 25, color: '#ffff00', shape: 'square' },
+          { type: 'drone', weight: 25, minSize: 12, maxSize: 20, points: 50, color: '#ff00ff', shape: 'triangle' },
+          { type: 'hovercar', weight: 5, minSize: 18, maxSize: 30, points: 100, color: '#00ffff', shape: 'square' },
+          { type: 'billboard', weight: 10, minSize: 25, maxSize: 40, points: 200, color: '#ff6600', shape: 'square' },
+          { type: 'building', weight: 35, minSize: 35, maxSize: 60, points: 500, color: '#9900ff', shape: 'square' }
+        ]
+      }
     ];
   }
-
-  async generateGameObjects() {
+async generateGameObjects(canvasWidth = window.innerWidth, canvasHeight = window.innerHeight) {
     await delay(300);
     
     const objects = [];
-    const canvasWidth = window.innerWidth;
-    const canvasHeight = window.innerHeight;
+    let objectId = 1;
     
-    // Generate different quantities for each object type
-    this.objectTypes.forEach((objectType, typeIndex) => {
-      const count = Math.max(1, Math.floor((6 - typeIndex) * 3)); // More small objects, fewer large ones
+    // Generate objects for each district
+    this.districts.forEach(district => {
+      const districtBounds = {
+        x: district.bounds.x * canvasWidth,
+        y: district.bounds.y * canvasHeight,
+        width: district.bounds.widthRatio * canvasWidth,
+        height: district.bounds.heightRatio * canvasHeight
+      };
       
-      for (let i = 0; i < count; i++) {
-        const size = Math.random() * (objectType.maxSize - objectType.minSize) + objectType.minSize;
-        const obj = {
-          Id: objects.length + 1,
-          type: objectType.type,
-          position: {
-            x: Math.random() * (canvasWidth - 100) + 50,
-            y: Math.random() * (canvasHeight - 100) + 50
-          },
-          size: size,
-          points: objectType.points,
-          color: objectType.color,
-          shape: objectType.shape,
-          isConsumable: true
-        };
+      // Calculate total weight for this district
+      const totalWeight = district.objectTypes.reduce((sum, type) => sum + type.weight, 0);
+      
+      // Generate objects based on weights
+      district.objectTypes.forEach(objectType => {
+        const count = Math.max(1, Math.floor((objectType.weight / totalWeight) * 15)); // Base 15 objects per district
         
-        objects.push(obj);
-      }
+        for (let i = 0; i < count; i++) {
+          const size = Math.random() * (objectType.maxSize - objectType.minSize) + objectType.minSize;
+          const obj = {
+            Id: objectId++,
+            type: objectType.type,
+            district: district.name,
+            position: {
+              x: Math.random() * (districtBounds.width - 100) + districtBounds.x + 50,
+              y: Math.random() * (districtBounds.height - 100) + districtBounds.y + 50
+            },
+            size: size,
+            points: objectType.points,
+            color: objectType.color,
+            shape: objectType.shape,
+            isConsumable: true
+          };
+          
+          objects.push(obj);
+        }
+      });
     });
 
     // Shuffle objects to distribute them randomly
     return this.shuffleArray(objects);
   }
-
   shuffleArray(array) {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {

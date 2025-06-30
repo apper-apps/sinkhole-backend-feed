@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { ToastContainer } from 'react-toastify';
-import GameCanvas from '@/components/organisms/GameCanvas';
-import GameHUD from '@/components/organisms/GameHUD';
-import GameOverScreen from '@/components/organisms/GameOverScreen';
-import StartScreen from '@/components/organisms/StartScreen';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
+import { AnimatePresence, motion } from "framer-motion";
+import GameOverScreen from "@/components/organisms/GameOverScreen";
+import GameHUD from "@/components/organisms/GameHUD";
+import StartScreen from "@/components/organisms/StartScreen";
+import GameCanvas from "@/components/organisms/GameCanvas";
 
 function App() {
   const [gameState, setGameState] = useState('start'); // 'start', 'playing', 'gameOver'
@@ -13,9 +13,9 @@ function App() {
   const [highScore, setHighScore] = useState(() => {
     const saved = localStorage.getItem('sinkhole-highscore');
     return saved ? parseInt(saved) : 0;
-  });
+});
   const [playerRadius, setPlayerRadius] = useState(20);
-
+  const [currentDistrict, setCurrentDistrict] = useState(null);
   const startGame = () => {
     setScore(0);
     setTimeRemaining(120);
@@ -32,9 +32,14 @@ function App() {
   };
 
   const resetGame = () => {
-    setGameState('start');
+setGameState('start');
   };
 
+  const handleDistrictChange = (district) => {
+    if (!currentDistrict || currentDistrict.name !== district.name) {
+      setCurrentDistrict(district);
+    }
+  };
   useEffect(() => {
     let interval;
     if (gameState === 'playing' && timeRemaining > 0) {
@@ -49,7 +54,14 @@ function App() {
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [gameState, timeRemaining]);
+}, [gameState, timeRemaining]);
+
+  // Reset district when game starts
+  useEffect(() => {
+    if (gameState === 'start') {
+      setCurrentDistrict(null);
+    }
+  }, [gameState]);
 
   return (
     <div className="w-full h-screen bg-background overflow-hidden relative">
@@ -81,16 +93,17 @@ function App() {
             <GameCanvas
               score={score}
               setScore={setScore}
-              playerRadius={playerRadius}
+playerRadius={playerRadius}
               setPlayerRadius={setPlayerRadius}
               gameState={gameState}
+              onDistrictChange={handleDistrictChange}
             />
             <GameHUD
               score={score}
-              timeRemaining={timeRemaining}
+timeRemaining={timeRemaining}
               playerRadius={playerRadius}
+              currentDistrict={currentDistrict}
             />
-          </motion.div>
         )}
 
         {gameState === 'gameOver' && (
@@ -102,7 +115,7 @@ function App() {
             transition={{ duration: 0.4, ease: "easeOut" }}
             className="absolute inset-0 z-50"
           >
-            <GameOverScreen
+<GameOverScreen
               score={score}
               highScore={highScore}
               onRestart={startGame}

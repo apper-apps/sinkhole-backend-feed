@@ -1,20 +1,20 @@
-import { useEffect, useRef, useCallback, useState } from 'react';
-import { toast } from 'react-toastify';
-import { gameObjectService } from '@/services/api/gameObjectService';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
+import { gameObjectService } from "@/services/api/gameObjectService";
 
-const GameCanvas = ({ score, setScore, playerRadius, setPlayerRadius, gameState }) => {
+const GameCanvas = ({ score, setScore, playerRadius, setPlayerRadius, gameState, onDistrictChange }) => {
   const canvasRef = useRef(null);
   const animationFrameRef = useRef();
   const [gameObjects, setGameObjects] = useState([]);
   const [player, setPlayer] = useState({ x: 0, y: 0 });
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [particles, setParticles] = useState([]);
-
+  const [currentDistrict, setCurrentDistrict] = useState(null);
   // Initialize game objects
   useEffect(() => {
-    const initializeGame = async () => {
+const initializeGame = async () => {
       try {
-        const objects = await gameObjectService.generateGameObjects();
+        const objects = await gameObjectService.generateGameObjects(window.innerWidth, window.innerHeight);
         setGameObjects(objects);
       } catch (error) {
         console.error('Error initializing game:', error);
@@ -33,8 +33,26 @@ const GameCanvas = ({ score, setScore, playerRadius, setPlayerRadius, gameState 
         });
       }
     }
-  }, [gameState]);
+}, [gameState]);
 
+  // District detection
+  const getDistrictFromPosition = (x, y) => {
+    const districts = [
+      { name: 'Downtown', bounds: { x: 0, y: 0, width: window.innerWidth * 0.4, height: window.innerHeight * 0.4 }, description: 'Business Core' },
+      { name: 'Residential', bounds: { x: window.innerWidth * 0.4, y: 0, width: window.innerWidth * 0.6, height: window.innerHeight * 0.5 }, description: 'Living Areas' },
+      { name: 'Industrial', bounds: { x: 0, y: window.innerHeight * 0.4, width: window.innerWidth * 0.3, height: window.innerHeight * 0.6 }, description: 'Factory Zone' },
+      { name: 'Commercial', bounds: { x: window.innerWidth * 0.3, y: window.innerHeight * 0.5, width: window.innerWidth * 0.4, height: window.innerHeight * 0.5 }, description: 'Shopping District' },
+      { name: 'Tech District', bounds: { x: window.innerWidth * 0.7, y: window.innerHeight * 0.5, width: window.innerWidth * 0.3, height: window.innerHeight * 0.5 }, description: 'Innovation Hub' }
+    ];
+    
+    for (const district of districts) {
+      if (x >= district.bounds.x && x <= district.bounds.x + district.bounds.width &&
+          y >= district.bounds.y && y <= district.bounds.y + district.bounds.height) {
+        return district;
+      }
+    }
+    return null;
+  };
   // Handle mouse movement
   const handleMouseMove = useCallback((event) => {
     const canvas = canvasRef.current;
@@ -58,11 +76,27 @@ const GameCanvas = ({ score, setScore, playerRadius, setPlayerRadius, gameState 
         y: prev.y + (mousePos.y - prev.y) * 0.1
       }));
     };
+};
 
     const interval = setInterval(updatePlayer, 16); // ~60fps
     return () => clearInterval(interval);
   }, [mousePos]);
-
+  // Check district changes
+  useEffect(() => {
+    const district = getDistrictFromPosition(player.x, player.y);
+    if (district && (!currentDistrict || currentDistrict.name !== district.name)) {
+      setCurrentDistrict(district);
+      onDistrictChange?.(district);
+      
+      // Show toast notification for district change
+      if (currentDistrict) {
+        toast.info(`Entering ${district.name}`, {
+          autoClose: 2000,
+          position: 'top-center'
+        });
+      }
+    }
+  }, [player, currentDistrict, onDistrictChange]);
   // Create particle effect
   const createParticles = useCallback((x, y, color, count = 8) => {
     const newParticles = [];
@@ -152,7 +186,7 @@ const GameCanvas = ({ score, setScore, playerRadius, setPlayerRadius, gameState 
       ctx.fillStyle = '#0a0a0f';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw grid
+// Draw grid
       ctx.strokeStyle = 'rgba(0, 255, 255, 0.1)';
       ctx.lineWidth = 1;
       const gridSize = 50;
@@ -171,6 +205,36 @@ const GameCanvas = ({ score, setScore, playerRadius, setPlayerRadius, gameState 
         ctx.stroke();
       }
 
+      // Draw district boundaries
+      const districts = [
+        { name: 'Downtown', bounds: { x: 0, y: 0, width: canvas.width * 0.4, height: canvas.height * 0.4 }, color: '#ff6b6b' },
+        { name: 'Residential', bounds: { x: canvas.width * 0.4, y: 0, width: canvas.width * 0.6, height: canvas.height * 0.5 }, color: '#4ecdc4' },
+        { name: 'Industrial', bounds: { x: 0, y: canvas.height * 0.4, width: canvas.width * 0.3, height: canvas.height * 0.6 }, color: '#45b7d1' },
+        { name: 'Commercial', bounds: { x: canvas.width * 0.3, y: canvas.height * 0.5, width: canvas.width * 0.4, height: canvas.height * 0.5 }, color: '#f9ca24' },
+        { name: 'Tech District', bounds: { x: canvas.width * 0.7, y: canvas.height * 0.5, width: canvas.width * 0.3, height: canvas.height * 0.5 }, color: '#6c5ce7' }
+      ];
+
+      districts.forEach(district => {
+        const isCurrentDistrict = currentDistrict?.name === district.name;
+        ctx.strokeStyle = isCurrentDistrict ? district.color + '80' : district.color + '20';
+        ctx.lineWidth = isCurrentDistrict ? 3 : 1;
+        ctx.setLineDash(isCurrentDistrict ? [] : [5, 5]);
+        
+        ctx.beginPath();
+        ctx.rect(district.bounds.x, district.bounds.y, district.bounds.width, district.bounds.height);
+        ctx.stroke();
+        
+        // District label
+        ctx.fillStyle = district.color + (isCurrentDistrict ? 'ff' : '60');
+        ctx.font = isCurrentDistrict ? 'bold 16px Arial' : '12px Arial';
+        ctx.fillText(
+          district.name, 
+          district.bounds.x + 10, 
+          district.bounds.y + 25
+        );
+      });
+      
+      ctx.setLineDash([]); // Reset line dash
       // Draw game objects
       gameObjects.forEach(obj => {
         const canConsume = obj.size < playerRadius;
