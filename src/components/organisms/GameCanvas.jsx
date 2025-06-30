@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { gameObjectService } from "@/services/api/gameObjectService";
-
 const GameCanvas = ({ score, setScore, playerRadius, setPlayerRadius, gameState, onDistrictChange }) => {
   const canvasRef = useRef(null);
   const animationFrameRef = useRef();
@@ -69,6 +68,7 @@ const initializeGame = async () => {
   }, []);
 
   // Update player position (smooth following)
+// Update player position (smooth following)
   useEffect(() => {
     const updatePlayer = () => {
       setPlayer(prev => ({
@@ -76,14 +76,14 @@ const initializeGame = async () => {
         y: prev.y + (mousePos.y - prev.y) * 0.1
       }));
     };
-};
-
-    const interval = setInterval(updatePlayer, 16); // ~60fps
+const interval = setInterval(updatePlayer, 16); // ~60fps
     return () => clearInterval(interval);
   }, [mousePos]);
+
   // Check district changes
   useEffect(() => {
     const district = getDistrictFromPosition(player.x, player.y);
+    if (district && (!currentDistrict || currentDistrict.name !== district.name)) {
     if (district && (!currentDistrict || currentDistrict.name !== district.name)) {
       setCurrentDistrict(district);
       onDistrictChange?.(district);
