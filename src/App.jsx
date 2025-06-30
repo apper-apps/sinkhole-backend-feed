@@ -81,7 +81,7 @@ setGameState('start');
           </motion.div>
         )}
 
-        {gameState === 'playing' && (
+{gameState === 'playing' && (
           <motion.div
             key="playing"
             initial={{ opacity: 0 }}
@@ -93,19 +93,19 @@ setGameState('start');
             <GameCanvas
               score={score}
               setScore={setScore}
-playerRadius={playerRadius}
+              playerRadius={playerRadius}
               setPlayerRadius={setPlayerRadius}
               gameState={gameState}
               onDistrictChange={handleDistrictChange}
             />
             <GameHUD
               score={score}
-timeRemaining={timeRemaining}
+              timeRemaining={timeRemaining}
               playerRadius={playerRadius}
               currentDistrict={currentDistrict}
             />
+          </motion.div>
         )}
-
         {gameState === 'gameOver' && (
           <motion.div
             key="gameOver"
