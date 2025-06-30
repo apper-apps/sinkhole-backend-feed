@@ -59,9 +59,9 @@ const GameOverScreen = ({ score, highScore, onRestart, onMainMenu }) => {
               }`}
             >
               <ApperIcon name="Crown" size={isMobile ? 24 : 32} className="text-accent animate-glow" />
-              <Text 
+<Text 
                 variant="display" 
-                size={isMobile ? "lg" : "xl"} 
+                size={isMobile ? "base" : "xl"} 
                 color="accent" 
                 neon 
                 className="font-bold"
@@ -74,7 +74,7 @@ const GameOverScreen = ({ score, highScore, onRestart, onMainMenu }) => {
           
 <Text 
             variant="display" 
-            size={isMobile ? "2xl" : "4xl"} 
+            size={isMobile ? "xl" : "4xl"} 
             color="error" 
             neon 
             className="font-black"
@@ -113,7 +113,7 @@ const GameOverScreen = ({ score, highScore, onRestart, onMainMenu }) => {
         >
 <Text 
             variant="body" 
-            size={isMobile ? "base" : "lg"} 
+            size={isMobile ? "sm" : "lg"} 
             color="white" 
             className="font-medium"
           >
@@ -124,7 +124,7 @@ const GameOverScreen = ({ score, highScore, onRestart, onMainMenu }) => {
              "Keep practicing!"}
           </Text>
           
-          <Text variant="body" size="sm" color="gray" className="max-w-md mx-auto">
+<Text variant="body" size="xs" color="gray" className={`mx-auto ${isMobile ? 'max-w-xs px-2' : 'max-w-md'}`}>
             {score > 5000 ? "You've mastered the cyberpunk void!" :
              score > 2500 ? "Your consumption skills are impressive." :
              score > 1000 ? "You're getting the hang of it." :

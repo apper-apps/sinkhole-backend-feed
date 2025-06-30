@@ -3,8 +3,11 @@ import Button from '@/components/atoms/Button';
 import Text from '@/components/atoms/Text';
 import ScoreDisplay from '@/components/molecules/ScoreDisplay';
 import ApperIcon from '@/components/ApperIcon';
+import { useMediaQuery } from 'react-responsive';
 
 const StartScreen = ({ onStart, highScore }) => {
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+  
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-background via-surface/20 to-background relative overflow-hidden">
       {/* Animated background elements */}
@@ -52,9 +55,9 @@ const StartScreen = ({ onStart, highScore }) => {
             <ApperIcon name="Zap" size={40} className="text-primary" />
           </motion.div>
           
-          <Text 
+<Text 
             variant="display" 
-            size="6xl" 
+            size={isMobile ? "4xl" : "6xl"} 
             color="primary" 
             neon 
             className="font-black tracking-wider"
@@ -64,9 +67,9 @@ const StartScreen = ({ onStart, highScore }) => {
           
           <Text 
             variant="body" 
-            size="lg" 
+            size={isMobile ? "base" : "lg"} 
             color="secondary" 
-            className="max-w-md mx-auto leading-relaxed"
+            className={`mx-auto leading-relaxed ${isMobile ? 'max-w-xs px-2' : 'max-w-md'}`}
           >
             Consume the neon city. Grow your void. Devour everything in your path.
           </Text>
@@ -91,7 +94,7 @@ const StartScreen = ({ onStart, highScore }) => {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="space-y-4 bg-surface/20 backdrop-blur-sm border border-secondary/20 rounded-lg p-6"
         >
-          <Text variant="display" size="lg" color="accent" className="font-bold">
+<Text variant="display" size={isMobile ? "base" : "lg"} color="accent" className="font-bold">
             How to Play
           </Text>
           <div className="space-y-2 text-left max-w-md">

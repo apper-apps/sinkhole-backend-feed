@@ -1,3 +1,5 @@
+import { useMediaQuery } from 'react-responsive';
+
 const Text = ({ 
   children, 
   variant = 'body', 
@@ -8,13 +10,14 @@ const Text = ({
   neon = false,
   ...props 
 }) => {
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+  
   const variants = {
     display: 'font-display',
     body: 'font-body',
     mono: 'font-mono'
   };
-
-  const sizes = {
+const sizes = {
     xs: 'text-xs',
     sm: 'text-sm', 
     base: 'text-base',
@@ -48,11 +51,30 @@ const Text = ({
     gray: 'text-gray-400'
   };
 
+// Mobile-responsive size mapping
+  const getResponsiveSize = (size) => {
+    if (!isMobile) return sizes[size];
+    
+    const mobileSizes = {
+      '6xl': 'text-4xl',
+      '5xl': 'text-3xl',
+      '4xl': 'text-2xl',
+      '3xl': 'text-xl',
+      '2xl': 'text-lg',
+      xl: 'text-lg',
+      lg: 'text-base',
+      base: 'text-sm',
+      sm: 'text-xs'
+    };
+    
+    return mobileSizes[size] || sizes[size];
+  };
+
   return (
     <span 
       className={`
         ${variants[variant]} 
-        ${sizes[size]} 
+        ${getResponsiveSize(size)} 
         ${weights[weight]} 
         ${colors[color]}
         ${neon ? 'neon-text' : ''}

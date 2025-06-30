@@ -54,7 +54,7 @@ const GameHUD = ({ score, timeRemaining, playerRadius, currentDistrict }) => {
         />
       )}
       
-<div className={`hidden md:flex justify-between items-start ${isMobile ? 'p-4' : 'p-6'}`}>
+<div className={`hidden md:flex justify-between items-start ${isMobile ? 'p-2' : 'p-6'}`}>
         {/* Left Side - Score */}
         <motion.div
           className="bg-surface/60 backdrop-blur-sm border border-primary/30 rounded-lg p-4 shadow-neon"
@@ -84,9 +84,9 @@ const GameHUD = ({ score, timeRemaining, playerRadius, currentDistrict }) => {
       </div>
 
 {/* Mobile Layout - Bottom HUD for smaller screens */}
-      <div className="md:hidden absolute bottom-4 left-4 right-4">
-        <div className="bg-surface/90 backdrop-blur-sm border border-primary/30 rounded-lg p-3 shadow-neon">
-          <div className="flex justify-between items-center">
+      <div className="md:hidden absolute bottom-2 left-2 right-2">
+        <div className="bg-surface/90 backdrop-blur-sm border border-primary/30 rounded-lg p-2 shadow-neon">
+          <div className="flex justify-between items-center text-xs">
             <div className="text-center flex-1">
               <ScoreDisplay score={score} />
             </div>
